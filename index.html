@@ -3,32 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-time Location Tracker</title>
+    <title>Touring Machine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Real-time Location Tracker</h1>
-    <div id="location-info">
-        <p>Waiting for location data...</p>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Real-time Location Tracker</h1>
+        
+        <div id="location-info" class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6 rounded">
+            <p>Waiting for location data...</p>
+        </div>
+
+        <div class="mb-6">
+            <label for="dietary-preference" class="block text-sm font-medium text-gray-700 mb-2">Dietary Preference:</label>
+            <select id="dietary-preference" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <option value="">Select a preference</option>
+                <option value="vegan">Vegan</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="pescatarian">Pescatarian</option>
+                <option value="keto">Keto</option>
+                <option value="paleo">Paleo</option>
+                <option value="gluten-free">Gluten-Free</option>
+                <option value="dairy-free">Dairy-Free</option>
+                <option value="omnivore">Omnivore</option>
+            </select>
+        </div>
+
+        <div id="selected-preference" class="text-sm text-gray-600 mb-6"></div>
+
+        <button id="go-button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+            Go
+        </button>
+
+        <div id="suggestions-result" class="mt-6 p-4 bg-gray-50 rounded-md text-sm text-gray-800"></div>
     </div>
-
-    <label for="dietary-preference">Dietary Preference:</label>
-    <select id="dietary-preference">
-        <option value="">Select a preference</option>
-        <option value="vegan">Vegan</option>
-        <option value="vegetarian">Vegetarian</option>
-        <option value="pescatarian">Pescatarian</option>
-        <option value="keto">Keto</option>
-        <option value="paleo">Paleo</option>
-        <option value="gluten-free">Gluten-Free</option>
-        <option value="dairy-free">Dairy-Free</option>
-        <option value="omnivore">Omnivore</option>
-    </select>
-
-    <div id="selected-preference"></div>
-
-    <button id="go-button">Go</button>
-
-    <div id="suggestions-result"></div>
 
     <script src="script.js"></script>
 </body>

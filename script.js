@@ -1,16 +1,18 @@
-// Function to update the location display
+// Function to update the location information
 function updateLocation(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    const accuracy = position.coords.accuracy;
+
     const locationInfo = document.getElementById('location-info');
-    const latitude = position.coords.latitude.toFixed(6);
-    const longitude = position.coords.longitude.toFixed(6);
     locationInfo.innerHTML = `
         <p>Latitude: ${latitude}</p>
         <p>Longitude: ${longitude}</p>
-        <p>Last updated: ${new Date().toLocaleTimeString()}</p>
+        <p>Accuracy: ${accuracy} meters</p>
     `;
 }
 
-// Function to handle geolocation errors
+// Function to handle errors
 function handleError(error) {
     const locationInfo = document.getElementById('location-info');
     switch(error.code) {
@@ -29,11 +31,31 @@ function handleError(error) {
     }
 }
 
+// Function to handle dietary preference selection
+function handleDietaryPreference() {
+    const dropdown = document.getElementById('dietary-preference');
+    const selectedPreference = document.getElementById('selected-preference');
+
+    dropdown.addEventListener('change', function() {
+        const selected = this.value;
+        if (selected) {
+            selectedPreference.textContent = `You selected: ${selected}`;
+            console.log(`Dietary preference selected: ${selected}`);
+        } else {
+            selectedPreference.textContent = '';
+        }
+    });
+}
+
 // Wait for the DOM to be fully loaded before executing the script
 document.addEventListener('DOMContentLoaded', function() {
+    // Check if geolocation is supported
     if ("geolocation" in navigator) {
         navigator.geolocation.watchPosition(updateLocation, handleError);
     } else {
-        document.getElementById('location-info').innerHTML = "Geolocation is not supported by this browser.";
+        document.getElementById('location-info').innerHTML = "Geolocation is not supported by your browser.";
     }
+
+    // Initialize dietary preference handling
+    handleDietaryPreference();
 });

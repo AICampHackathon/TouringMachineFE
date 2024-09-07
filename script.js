@@ -1,13 +1,15 @@
+let currentLatitude, currentLongitude;
+
 // Function to update the location information
 function updateLocation(position) {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
+    currentLatitude = position.coords.latitude;
+    currentLongitude = position.coords.longitude;
     const accuracy = position.coords.accuracy;
 
     const locationInfo = document.getElementById('location-info');
     locationInfo.innerHTML = `
-        <p>Latitude: ${latitude}</p>
-        <p>Longitude: ${longitude}</p>
+        <p>Latitude: ${currentLatitude}</p>
+        <p>Longitude: ${currentLongitude}</p>
         <p>Accuracy: ${accuracy} meters</p>
     `;
 }
@@ -47,6 +49,32 @@ function handleDietaryPreference() {
     });
 }
 
+// Function to handle the "Go" button click
+function handleGoButton() {
+    const goButton = document.getElementById('go-button');
+    const suggestionsResult = document.getElementById('suggestions-result');
+
+    goButton.addEventListener('click', function() {
+        if (currentLatitude && currentLongitude) {
+            // Make API call
+            fetch(`https://touring-machine.fly.dev/get-suggestions?latitude=${currentLatitude}&longitude=${currentLongitude}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Display results in HTML
+                    suggestionsResult.innerHTML = `<p>Suggestions: ${JSON.stringify(data)}</p>`;
+                    // Log results to console
+                    console.log('Suggestions:', data);
+                })
+                .catch(error => {
+                    suggestionsResult.innerHTML = `<p>Error fetching suggestions: ${error.message}</p>`;
+                    console.error('Error:', error);
+                });
+        } else {
+            suggestionsResult.innerHTML = '<p>Location data not available. Please wait for GPS to initialize.</p>';
+        }
+    });
+}
+
 // Wait for the DOM to be fully loaded before executing the script
 document.addEventListener('DOMContentLoaded', function() {
     // Check if geolocation is supported
@@ -58,4 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize dietary preference handling
     handleDietaryPreference();
+
+    // Initialize Go button handling
+    handleGoButton();
 });

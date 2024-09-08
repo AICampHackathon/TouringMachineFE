@@ -1,6 +1,17 @@
 let currentLatitude, currentLongitude;
+let map, marker;
 
-// Function to update the location information
+// Function to initialize the map
+function initMap() {
+    map = L.map('map').fitWorld();
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    marker = L.marker([0, 0]).addTo(map);
+}
+
+// Function to update the location information and map
 function updateLocation(position) {
     currentLatitude = position.coords.latitude;
     currentLongitude = position.coords.longitude;
@@ -8,10 +19,32 @@ function updateLocation(position) {
 
     const locationInfo = document.getElementById('location-info');
     locationInfo.innerHTML = `
-        <p>Latitude: ${currentLatitude}</p>
-        <p>Longitude: ${currentLongitude}</p>
-        <p>Accuracy: ${accuracy} meters</p>
+        <p><strong>Latitude:</strong> ${currentLatitude}</p>
+        <p><strong>Longitude:</strong> ${currentLongitude}</p>
+        <p><strong>Accuracy:</strong> ${accuracy} meters</p>
     `;
+
+    // Update map
+    const newLatLng = [currentLatitude, currentLongitude];
+    map.setView(newLatLng, 15);
+    marker.setLatLng(newLatLng);
+
+    // Get city name
+    getCityName(currentLatitude, currentLongitude);
+}
+
+// Function to get city name from coordinates
+function getCityName(lat, lon) {
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`)
+        .then(response => response.json())
+        .then(data => {
+            const city = data.address.city || data.address.town || data.address.village || 'Unknown location';
+            document.getElementById('welcome-message').textContent = `Welcome to ${city}`;
+        })
+        .catch(error => {
+            console.error('Error fetching city name:', error);
+            document.getElementById('welcome-message').textContent = 'Welcome!';
+        });
 }
 
 // Function to handle errors
@@ -33,27 +66,11 @@ function handleError(error) {
     }
 }
 
-// Function to handle dietary preference selection
-function handleDietaryPreference() {
-    const dropdown = document.getElementById('dietary-preference');
-    const selectedPreference = document.getElementById('selected-preference');
-
-    dropdown.addEventListener('change', function() {
-        const selected = this.value;
-        if (selected) {
-            selectedPreference.textContent = `You selected: ${selected}`;
-            console.log(`Dietary preference selected: ${selected}`);
-        } else {
-            selectedPreference.textContent = '';
-        }
-    });
-}
-//API host: https://touring-machine.fly.dev
-
 // Function to handle the "Go" button click
 function handleGoButton() {
     const goButton = document.getElementById('go-button');
     const suggestionsResult = document.getElementById('suggestions-result');
+    const userInput = document.getElementById('user-input');
 
     goButton.addEventListener('click', function() {
         if (currentLatitude && currentLongitude) {
@@ -61,7 +78,7 @@ function handleGoButton() {
             suggestionsResult.innerHTML = '<p class="text-center">Loading suggestions...</p>';
             
             // Make API call
-            fetch(`https://touring-machine.fly.dev/get-suggestions?latitude=${currentLatitude}&longitude=${currentLongitude}`)
+            fetch(`https://touring-machine.fly.dev/get-suggestions?latitude=${currentLatitude}&longitude=${currentLongitude}&preferences=${encodeURIComponent(userInput.value)}`)
                 .then(response => response.json())
                 .then(data => {
                     // Display results in HTML
@@ -91,7 +108,7 @@ function renderSuggestions(data) {
             <div class="space-y-6">
                 ${renderSection('Restaurants', data.suggestions.restaurants)}
                 ${renderSection('Bookstores', data.suggestions.bookstores)}
-                ${renderSection('OtherPlaces', data.suggestions['other places'])}
+                ${renderSection('Other Places', data.suggestions.other_places)}
             </div>
         </div>
     `;
@@ -116,6 +133,8 @@ function renderSection(title, items) {
                 <p class="text-sm text-gray-600">${item.address}</p>
                 ${item.cuisine ? `<p class="text-sm text-indigo-600">${item.cuisine}</p>` : ''}
                 ${item.category ? `<p class="text-sm text-green-600">${item.category}</p>` : ''}
+                ${item.description ? `<p class="text-sm text-green-600">${item.description}</p>` : ''}
+                ${item.url ? `<p class="text-sm text-blue-600"><a href=${item.url}>${item.url}</a></p>` : ''}
             </div>
         `;
     });
@@ -128,18 +147,17 @@ function renderSection(title, items) {
     return html;
 }
 
-
 // Wait for the DOM to be fully loaded before executing the script
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Leaflet Map
+    initMap();
+
     // Check if geolocation is supported
     if ("geolocation" in navigator) {
         navigator.geolocation.watchPosition(updateLocation, handleError);
     } else {
         document.getElementById('location-info').innerHTML = "Geolocation is not supported by your browser.";
     }
-
-    // Initialize dietary preference handling
-    handleDietaryPreference();
 
     // Initialize Go button handling
     handleGoButton();

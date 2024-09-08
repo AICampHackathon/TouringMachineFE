@@ -5,41 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Touring Machine</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map { height: 400px; }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-8">
-    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Touring Machine</h1>
         
+        <div id="welcome-message" class="text-xl text-blue-600 mb-4">Welcome to...</div>
+        
+        <div id="map" class="w-full mb-6 rounded-lg"></div>
+
         <div id="location-info" class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6 rounded">
-            <p>Waiting for location data..</p>
+            <p>Waiting for location data...</p>
         </div>
 
         <div class="mb-6">
-            <label for="dietary-preference" class="block text-sm font-medium text-gray-700 mb-2">Do you have any food preferences?</label>
-            <select id="dietary-preference" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <option value="">Select a preference</option>
-                <option value="vegan">Vegan</option>
-                <option value="vegetarian">Vegetarian</option>
-                <option value="pescatarian">Pescatarian</option>
-                <option value="keto">Keto</option>
-                <option value="paleo">Paleo</option>
-                <option value="gluten-free">Gluten-Free</option>
-                <option value="dairy-free">Dairy-Free</option>
-                <option value="omnivore">Omnivore</option>
-            </select>
+            <label for="user-input" class="block text-sm font-medium text-gray-700 mb-2">What would you like to do?</label>
+            <input type="text" id="user-input" name="user-input" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter your input here">
         </div>
-        <div class="mb-6">
-            <label for="budget-preference" class="block text-sm font-medium text-gray-700 mb-2">How much do you want to spend?</label>
-            <select id="budget-preference" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <option value="">Select a preference</option>
-                <option value="Free">Free all the way</option>
-                <option value="Below25">Less than $25</option>
-                <option value="Below50">Less than $50</option>
-                <option value="Below100">Less than $100</option>
-                <option value="Nolimit">Sky is the limit</option>
-            </select>
-        </div>
-        <div id="selected-preference" class="text-sm text-gray-600 mb-6"></div>
 
         <button id="go-button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
             Go
